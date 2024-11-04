@@ -1,0 +1,132 @@
+---
+title: "tutorial"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(BayesianDiffCircadian)
+
+###### Get data #######
+Period=24
+w = (2*pi)/Period
+sig2 = 1
+G=1000
+n1=24
+n2=24
+
+set.seed(123)
+A1 = rep(3,G) 
+A1[1:G/10] <- 3 + 3  #set different Amplitude
+A2 = rep(3,G)
+phi1 <- runif(G,0,24)
+#phi1 <- rep(10,G)
+phi2 <- phi1
+M1 <- runif(G,3,7)
+#M1 <- rep(5,G)
+#M1[1:G/10] <- 2  #set different Mesor
+M2 <- M1
+Y1 <- matrix(NA,1000,n1)
+Y2 <- matrix(NA,1000,n2)
+X1 <- matrix(NA,1,n1)
+Z1 <- matrix(NA,1,n1)
+X2 <- matrix(NA,1,n2)
+Z2 <- matrix(NA,1,n2)
+t1 <- matrix(NA,1,n1)
+t2 <- matrix(NA,1,n2)
+set.seed(123)
+for (i in 1:n1) {
+  t <- runif(1,0,Period)
+  t1[i] <- t 
+  X1[i] = cos((t*pi)/12) # w = (2*pi)/Period
+  Z1[i] = sin((t*pi)/12)
+  Y1[,i] <- rnorm(G, mean = A1*cos(w*t + phi1 ) + M1 , sd = sqrt(sig2))
+}
+
+set.seed(12)
+for (i in 1:n2) {
+  t <- runif(1,0,Period)
+  t2[i] <- t 
+  X2[i] = cos((t*pi)/12) # w = (2*pi)/Period
+  Z2[i] = sin((t*pi)/12)
+  Y2[,i] <- rnorm(G, mean = A2*cos(w*t + phi2 ) + M2 , sd = sqrt(sig2))
+}
+
+# just use number as the genes' names
+row.names(Y1) <- 1:1000
+row.names(Y2) <- 1:1000
+
+###### Get hyperparameters ######
+#1. fit a linear model to check how large the E, F and M are
+fitted_values1 <- matrix(NA,G,3)
+colnames(fitted_values1) <- c('M1','E1','F1')
+for (i in 1:G) {
+  mod <- lm(Y1[i,] ~ as.vector(X1) + as.vector(Z1))
+  fitted_values1[i,] <- mod$coefficients
+}
+
+fitted_values2 <- matrix(NA,G,3)
+colnames(fitted_values2) <- c('M2','E2','F2')
+for (i in 1:G) {
+  mod <- lm(Y2[i,] ~ as.vector(X2) + as.vector(Z2))
+  fitted_values2[i,] <- mod$coefficients
+}
+
+difference <- fitted_values2 - fitted_values1
+colnames(difference) <- c("diff_M","mu_E","mu_F")
+difference <- as.data.frame(difference)
+
+#2. get prior for tau2_1 and tau2_0
+prior <- top5per_tau(difference$mu_E,difference$mu_F)
+a_tau2_1 <- prior$a_tau2_1
+b_tau2_1 <- prior$b_tau2_1
+a_tau2_1 
+b_tau2_1
+
+prior <- bottom5per_tau(difference$mu_E,difference$mu_F)
+a_tau2_0 <- prior$a_tau2_0
+b_tau2_0 <- prior$b_tau2_0
+a_tau2_0
+b_tau2_0
+
+#3. get prior for delta2_1 and delta2_0
+prior <- top5per_delta(difference$diff_M)
+a_delta2_1 <- prior$a_delta2_1
+b_delta2_1 <- prior$b_delta2_1
+a_delta2_1
+b_delta2_1
+
+prior <- bottom5per_delta(difference$diff_M)
+prior$a_delta2_0
+a_delta2_0 <- prior$a_delta2_0
+b_delta2_0 <- prior$b_delta2_0
+a_delta2_0
+b_delta2_0
+
+
+#4. set hyperparameters
+hyperparameters <- c(1,1,1,1, 10,10,10, 3,3,3,3,
+                     a_tau2_1,b_tau2_1,a_tau2_0,b_tau2_0,a_delta2_1,b_delta2_1,a_delta2_0,b_delta2_0)
+
+###### process gibbs sampling ######
+set.seed(123)
+output <- gibbs_main(Y1 = Y1,Y2 = Y2, t1 = t1, t2 = t2, n.iter= 10000, hyperparameters = hyperparameters, showIteration = F)
+
+###### evaluate the result ######
+belief <- rowSums(output$I_record)/5000
+qval <- BayesianFDR(belief)
+ind.gene <- which(qval <= 0.05)
+length(ind.gene)
+ind.gene
+sum(ind.gene <= 100)
+```
