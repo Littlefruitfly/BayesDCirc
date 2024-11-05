@@ -15,26 +15,23 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(BayesianDiffCircadian)
+library(BayesDCirc)
 
 ###### Get data #######
 Period=24
 w = (2*pi)/Period
-sig2 = 1
+sig2 = 0.25
 G=1000
 n1=24
 n2=24
 
 set.seed(123)
-A1 = rep(3,G) 
-A1[1:G/10] <- 3 + 3  #set different Amplitude
-A2 = rep(3,G)
+A1 = rep(5,G) 
+A1[1:G/10] <- 5 + 3  #set different Amplitude
+A2 = rep(5,G)
 phi1 <- runif(G,0,24)
-#phi1 <- rep(10,G)
 phi2 <- phi1
 M1 <- runif(G,3,7)
-#M1 <- rep(5,G)
-#M1[1:G/10] <- 2  #set different Mesor
 M2 <- M1
 Y1 <- matrix(NA,1000,n1)
 Y2 <- matrix(NA,1000,n2)
@@ -115,7 +112,7 @@ b_delta2_0
 
 
 #4. set hyperparameters
-hyperparameters <- c(1,1,1,1, 10,10,10, 3,3,3,3,
+hyperparameters <- c(1,1,1,1, 10,10,10, 0.001,0.001,0.001,0.001,
                      a_tau2_1,b_tau2_1,a_tau2_0,b_tau2_0,a_delta2_1,b_delta2_1,a_delta2_0,b_delta2_0)
 
 ###### process gibbs sampling ######
