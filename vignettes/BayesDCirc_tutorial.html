@@ -257,7 +257,7 @@ pre code {
 <h2 number="2.1"><span class="header-section-number">2.1</span> How to install the package</h2>
 <p>To install this package, start R (version “2.10” or higher) and enter:</p>
 <pre class="r"><code>library(devtools)
-devtools::install_github(&quot;Littlefruitfly/BayesDCirc&quot;)</code></pre>
+devtools::install_github(&quot;lichen-lab/BayesDCirc&quot;)</code></pre>
 </div>
 <div id="how-to-cite-the-package" class="section level2" number="2.2">
 <h2 number="2.2"><span class="header-section-number">2.2</span> How to cite the package</h2>
@@ -323,9 +323,7 @@ if(F){
 </div>
 <div id="differential-shape-and-mesor" class="section level2" number="3.2">
 <h2 number="3.2"><span class="header-section-number">3.2</span> Differential shape and MESOR</h2>
-<div id="get-hyperparameters-for-bayesdcirc" class="section level3" number="3.2.1">
-<h3 number="3.2.1"><span class="header-section-number">3.2.1</span> Get hyperparameters for BayesDCirc</h3>
-<p>We need to set hyperparameters before performing BayesDCirc.</p>
+<p><strong>Get hyperparameters for BayesDCirc</strong></p>
 <pre class="r"><code># Get hyperparameters
 hyperparameters &lt;- get_hyperparameters(Y1,Y2,t1,t2, use_default = T)
 hyperparameters
@@ -333,15 +331,12 @@ hyperparameters
 #&gt;  [6] 10.000000000 10.000000000  0.001000000  0.001000000  0.001000000
 #&gt; [11]  0.001000000 69.000000000 12.531219384 69.000000000  0.042392116
 #&gt; [16] 34.500000000 35.011898107 34.500000000  0.003335132</code></pre>
-</div>
-<div id="differential-shape" class="section level3" number="3.2.2">
-<h3 number="3.2.2"><span class="header-section-number">3.2.2</span> Differential shape</h3>
 <p><strong>Perform BayesDCirc using gibbs sampling</strong></p>
 <pre class="r"><code># process gibbs sampling
 set.seed(123)
 output &lt;- BayesDCirc(Y1 = Y1,Y2 = Y2, t1 = t1, t2 = t2, n.iter= 10000, hyperparameters = hyperparameters, showIteration = F)
 #&gt;   running the Gibbs sampler ...
-#&gt;   The Gibbs sampler takes: 0.699 mins</code></pre>
+#&gt;   The Gibbs sampler takes: 0.761 mins</code></pre>
 <p><strong>Evaluate differential shape</strong></p>
 <pre class="r"><code># evaluate the result by FDR
 result_shape_diff &lt;- BayesianFDR(output, indicator = &quot;I&quot;)
@@ -453,7 +448,6 @@ lines(tt_base, byy_old_fit, col = 4, lwd =3)</code></pre>
 #&gt; [13] rmarkdown_2.13    tools_4.1.1       stringr_1.4.0     xfun_0.30        
 #&gt; [17] yaml_2.3.5        fastmap_1.1.1     compiler_4.1.1    htmltools_0.5.2  
 #&gt; [21] knitr_1.38        sass_0.4.1</code></pre>
-</div>
 </div>
 </div>
 

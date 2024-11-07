@@ -6,7 +6,6 @@
 ##' @param mu_F mu_F from linear regression
 ##' @return prior
 ##' @author Yutao Zhang
-##' @export
 ##' @examples
 ##' mu_E = rnorm(1000)
 ##' mu_F = rnorm(1000)

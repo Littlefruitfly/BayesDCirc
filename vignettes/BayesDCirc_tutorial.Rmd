@@ -106,7 +106,7 @@ To install this package, start R (version "2.10" or higher) and enter:
   
 ```{r, eval=FALSE}
 library(devtools)
-devtools::install_github("Littlefruitfly/BayesDCirc")
+devtools::install_github("lichen-lab/BayesDCirc")
 ```
 
 ## How to cite the package
@@ -181,19 +181,15 @@ if(F){
 
 ## Differential shape and MESOR
 
-### Get hyperparameters for BayesDCirc
-We need to set hyperparameters before performing BayesDCirc.
-
+**Get hyperparameters for BayesDCirc**
 ```{r}
 # Get hyperparameters
 hyperparameters <- get_hyperparameters(Y1,Y2,t1,t2, use_default = T)
 hyperparameters
 ```
 
-
-### Differential shape
-
 **Perform BayesDCirc using gibbs sampling**
+
 ```{r}
 # process gibbs sampling
 set.seed(123)

@@ -5,7 +5,6 @@
 ##' @param mu_M mu_M from linear regression 
 ##' @return prior
 ##' @author Yutao Zhang
-##' @export
 ##' @examples
 ##' mu_M = rnorm(1000)
 ##' top5per_delta(mu_M)
