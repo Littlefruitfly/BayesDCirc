@@ -2,25 +2,26 @@
 % Please edit documentation in R/BayesianFDR.R
 \name{BayesianFDR}
 \alias{BayesianFDR}
-\title{compute the q values}
+\title{compute the Bayesian FDR}
 \usage{
-BayesianFDR(belief)
+BayesianFDR(output_BayesDCirc, indicator)
 }
 \arguments{
-\item{belief}{a vector, the ratio of sums of indicator for each gene to the iteration after burning}
+\item{output_BayesDCirc}{a list containing posterior values, typically obtained from \code{BayesDCirc}.}
+
+\item{indicator}{a character string, either "I" or "L", indicating which specific indicator to check.}
 }
 \value{
-q value
+a data frame containing FDR of all gene candidates.
 }
 \description{
 BayesianFDR Function
 }
 \details{
-We want to compute the q values using this function
+We want to compute FDR using this function
 }
 \examples{
-belief = runif(1000)
-BayesianFDR(belief)
+BayesianFDR(output, indicator = "I")
 }
 \author{
 Yutao Zhang
